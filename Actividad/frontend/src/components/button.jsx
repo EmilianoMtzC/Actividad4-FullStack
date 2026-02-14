@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { buildApiUrl } from "../lib/api.js";
 
 function ButtonComponent({ text, onClick, api, type = "button", className = "", style }) {
     const buttonStyle = {
@@ -31,7 +32,6 @@ function ButtonComponent({ text, onClick, api, type = "button", className = "", 
                 onError
             } = api;
 
-            const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
             const resolvedBody = typeof body === "function" ? body() : body;
             const requestHeaders = {
                 "Content-Type": "application/json",
@@ -47,7 +47,7 @@ function ButtonComponent({ text, onClick, api, type = "button", className = "", 
 
             try {
                 setLoading(true);
-                const response = await fetch(`${baseUrl}${path}`, {
+                const response = await fetch(buildApiUrl(path), {
                     method,
                     headers: requestHeaders,
                     body: resolvedBody ? JSON.stringify(resolvedBody) : undefined

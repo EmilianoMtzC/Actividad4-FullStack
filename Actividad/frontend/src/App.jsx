@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar.jsx";
 import ButtonComponent from "./components/button.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import { buildApiUrl } from "./lib/api.js";
 
 function DashboardView() {
     const [transactions, setTransactions] = useState([]);
@@ -27,9 +28,8 @@ function DashboardView() {
         setError("");
         setLoading(true);
         try {
-            const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
             const token = localStorage.getItem("token");
-            const response = await fetch(`${baseUrl}/api/transactions`, {
+            const response = await fetch(buildApiUrl("/api/transactions"), {
                 headers: {
                     Authorization: token ? `Bearer ${token}` : ""
                 }
@@ -60,9 +60,8 @@ function DashboardView() {
         setCreateError("");
         setCreating(true);
         try {
-            const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
             const token = localStorage.getItem("token");
-            const response = await fetch(`${baseUrl}/api/transactions`, {
+            const response = await fetch(buildApiUrl("/api/transactions"), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
