@@ -1,25 +1,313 @@
-import "./styles/style.css"
+import "./styles/style.css";
+import { useEffect, useState } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
-import ButtonComponent from './components/button.jsx';
+import ButtonComponent from "./components/button.jsx";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+
+function DashboardView() {
+    const [transactions, setTransactions] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [typeFilterOpen, setTypeFilterOpen] = useState(false);
+    const [typeFilter, setTypeFilter] = useState("all");
+    const [showForm, setShowForm] = useState(false);
+    const [creating, setCreating] = useState(false);
+    const [createError, setCreateError] = useState("");
+    const [form, setForm] = useState({
+        type: "income",
+        category: "",
+        amount: "",
+        description: "",
+        date: ""
+    });
+
+    const fetchTransactions = async () => {
+        setError("");
+        setLoading(true);
+        try {
+            const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${baseUrl}/api/transactions`, {
+                headers: {
+                    Authorization: token ? `Bearer ${token}` : ""
+                }
+            });
+            const data = await response.json().catch(() => []);
+            if (!response.ok) {
+                throw new Error(data?.error || data?.message || "Error al cargar transacciones");
+            }
+            setTransactions(Array.isArray(data) ? data : []);
+        } catch (err) {
+            setError(err?.message || "Error al cargar transacciones");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchTransactions();
+    }, []);
+
+    const handleFormChange = (event) => {
+        const { name, value } = event.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleCreate = async (event) => {
+        event.preventDefault();
+        setCreateError("");
+        setCreating(true);
+        try {
+            const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${baseUrl}/api/transactions`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token ? `Bearer ${token}` : ""
+                },
+                body: JSON.stringify({
+                    type: form.type,
+                    category: form.category,
+                    amount: Number(form.amount),
+                    description: form.description,
+                    date: form.date
+                })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data?.error || data?.message || "Error al crear transacción");
+            }
+            setShowForm(false);
+            setForm({
+                type: "income",
+                category: "",
+                amount: "",
+                description: "",
+                date: ""
+            });
+            await fetchTransactions();
+        } catch (err) {
+            setCreateError(err?.message || "Error al crear transacción");
+        } finally {
+            setCreating(false);
+        }
+    };
+
+    const filteredTransactions =
+        typeFilter === "all"
+            ? transactions
+            : transactions.filter((tx) => tx.type === typeFilter);
+
+    return (
+        <div>
+            <Navbar />
+            <main className="page">
+                <div style={{ width: "100%" }}>
+                    <section className="action-section">
+                        <div className="action-bar">
+                            <ul className="action-bar-list" style={{ gap: "1.4em" }}>
+                                <li>
+                                    <span style={{ color: "white", marginRight: "8px" }}>
+                                        SORT<br />BY:
+                                    </span>
+                                </li>
+                                <li>
+                                    <ButtonComponent
+                                        className="sort-date-btn"
+                                        text="Date"
+                                        onClick={() => console.log("Ordenando por fecha")}
+                                    />
+                                </li>
+                                <li>
+                                    <div className="type-filter">
+                                        <ButtonComponent
+                                            className="sort-type-btn"
+                                            text={
+                                                typeFilter === "all"
+                                                    ? "Type"
+                                                    : `Type: ${typeFilter}`
+                                            }
+                                            onClick={() =>
+                                                setTypeFilterOpen((prev) => !prev)
+                                            }
+                                        />
+                                        {typeFilterOpen ? (
+                                            <div className="type-filter-menu">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setTypeFilter("income");
+                                                        setTypeFilterOpen(false);
+                                                    }}
+                                                >
+                                                    income
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setTypeFilter("expense");
+                                                        setTypeFilterOpen(false);
+                                                    }}
+                                                >
+                                                    expense
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setTypeFilter("all");
+                                                        setTypeFilterOpen(false);
+                                                    }}
+                                                >
+                                                    all
+                                                </button>
+                                            </div>
+                                        ) : null}
+                                    </div>
+                                </li>
+                            </ul>
+                            <ButtonComponent
+                                className="add-btn"
+                                text="+"
+                                onClick={() => setShowForm(true)}
+                            />
+                        </div>
+                    </section>
+                    <section className="dashboard-panel">
+                        <div className="dashboard-header">
+                            <span>Transactions</span>
+                            {loading ? <span className="muted">Cargando...</span> : null}
+                        </div>
+                        {error ? <div className="dashboard-error">{error}</div> : null}
+                        <div className="table-wrap">
+                            <table className="transactions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Category</th>
+                                        <th>Amount</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredTransactions.length === 0 && !loading ? (
+                                        <tr>
+                                            <td colSpan="5" className="empty-row">
+                                                No transactions yet.
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        filteredTransactions.map((tx) => (
+                                            <tr key={tx.id}>
+                                                <td>
+                                                    {tx.date
+                                                        ? new Date(tx.date).toLocaleDateString()
+                                                        : "-"}
+                                                </td>
+                                                <td>{tx.type || "-"}</td>
+                                                <td>{tx.category || "-"}</td>
+                                                <td>{tx.amount ?? "-"}</td>
+                                                <td>{tx.description || "-"}</td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    {showForm ? (
+                        <div className="modal-backdrop" onClick={() => setShowForm(false)}>
+                            <form
+                                className="modal-card"
+                                onSubmit={handleCreate}
+                                onClick={(event) => event.stopPropagation()}
+                            >
+                                <h2>Nueva transacción</h2>
+                                <div className="modal-row">
+                                    <label>Type</label>
+                                    <select name="type" value={form.type} onChange={handleFormChange}>
+                                        <option value="income">income</option>
+                                        <option value="expense">expense</option>
+                                    </select>
+                                </div>
+                                <div className="modal-row">
+                                    <label>Category</label>
+                                    <input
+                                        name="category"
+                                        value={form.category}
+                                        onChange={handleFormChange}
+                                        placeholder="categoria"
+                                        required
+                                    />
+                                </div>
+                                <div className="modal-row">
+                                    <label>Amount</label>
+                                    <input
+                                        name="amount"
+                                        type="number"
+                                        step="0.01"
+                                        value={form.amount}
+                                        onChange={handleFormChange}
+                                        placeholder="0.00"
+                                        required
+                                    />
+                                </div>
+                                <div className="modal-row">
+                                    <label>Description</label>
+                                    <input
+                                        name="description"
+                                        value={form.description}
+                                        onChange={handleFormChange}
+                                        placeholder="descripcion"
+                                    />
+                                </div>
+                                <div className="modal-row">
+                                    <label>Date</label>
+                                    <input
+                                        name="date"
+                                        type="date"
+                                        value={form.date}
+                                        onChange={handleFormChange}
+                                        required
+                                    />
+                                </div>
+                                {createError ? (
+                                    <div className="dashboard-error">{createError}</div>
+                                ) : null}
+                                <div className="modal-actions">
+                                    <ButtonComponent
+                                        text="Cancelar"
+                                        onClick={() => setShowForm(false)}
+                                        type="button"
+                                        style={{ backgroundColor: "#4a4a4a" }}
+                                    />
+                                    <ButtonComponent
+                                        text={creating ? "Guardando..." : "Guardar"}
+                                        type="submit"
+                                    />
+                                </div>
+                            </form>
+                        </div>
+                    ) : null}
+                </div>
+            </main>
+        </div>
+    );
+}
 
 function App() {
     return (
-        <div>
-            <Navbar/>
-            <main className="page">
-                <section className="action-section">
-                    <div className="action-bar">
-                        <ul class="action-bar-list" style={{ display: 'flex', alignItems: 'center', listStyle: 'none', gap: '2em' }}>
-                            <li><span style={{ color: 'white', marginRight: '5px' }}>Sort<br/>By:</span></li>
-                            <li><ButtonComponent class="sort-date-btn" text="Date" onClick={() => console.log('Ordenando por fecha')} /></li>
-                            <li><ButtonComponent class="sort-type-btn" text="Type" onClick={() => console.log('Ordenando por tipo')} /></li>
-                        </ul>
-                        <ButtonComponent class="add-btn" text="+" onClick={() => alert('Añadir nuevo')} />
-
-                    </div>
-                </section>
-            </main>
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/dashboard" element={<DashboardView />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 

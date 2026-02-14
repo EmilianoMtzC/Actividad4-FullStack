@@ -1,57 +1,35 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 function Navbar() {
+    const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        navigate("/login");
+    };
+
     return (
         <nav className="navbar">
-            <style>{`
-                .navbar {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 1em 4em 1em 4em;
-                    background-color: #303030;
-                    color: white;
-                }
-                
-                .navbar__logo {
-                    display:flex;
-                    justify-content: center;
-                    align-items: center;
-                    font-weight: bold;
-                    background-color: #202020;
-                    width: 10em;
-                    height: 2.4em;
-                }
-                    
-                .navbar__links {
-                    display: flex;
-                    list-style: none;
-                    justify-content: center;
-                    flex-align: center;
-                    background-color: #303030;
-                }
-                .navbar__links a {
-                    color: none;
-                    text-decoration: none;
-                    background-color: #303030;
-                    
-                }
-                
-                .profile {
-                    width: 3em;
-                    height: 3em;
-                    background-color: #202020;
-                    border-radius: 50px;
-                    border: none;
-                }
-                
-            `}</style>
-
             <div className="navbar__logo"></div>
-            <ul className="navbar__links">
-                <li><a href="#profile"><div className="profile"></div></a></li>
-            </ul>
+            <div className="profile-menu">
+                <button
+                    className="profile"
+                    type="button"
+                    onClick={() => setOpen((prev) => !prev)}
+                    aria-expanded={open}
+                />
+                {open ? (
+                    <div className="profile-dropdown">
+                        <button className="profile-item" type="button" onClick={handleLogout}>
+                            Logout
+                        </button>
+                    </div>
+                ) : null}
+            </div>
         </nav>
     );
 }
 
 export default Navbar;
-
