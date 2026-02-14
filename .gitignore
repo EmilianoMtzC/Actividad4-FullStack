@@ -1,1 +1,3 @@
 ./.idea
+./Actividad/backend/.node_modules
+./Actividad/backend/.env
