@@ -34,12 +34,12 @@
     &quot;assignee&quot;: &quot;EmilianoMtzC&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/EmilianoMtzC/Actividad4-FullStack.git",
-    "accountId": "b3c5d140-b3b2-4352-a5c8-ebc109c08300"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/EmilianoMtzC/Actividad4-FullStack.git&quot;,
+    &quot;accountId&quot;: &quot;b3c5d140-b3b2-4352-a5c8-ebc109c08300&quot;
   }
-}]]></component>
+}</component>
   <component name="HttpClientOnboardingState">{
   &quot;isOnboardingCommentShown&quot;: true
 }</component>
@@ -57,6 +57,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
     "HTTP Request.All in pruebas_api.executor": "Run",
     "HTTP Request.pruebas_api | Borrar una transacción específica.executor": "Run",
     "HTTP Request.pruebas_api | Crear una nueva transacción.executor": "Run",
