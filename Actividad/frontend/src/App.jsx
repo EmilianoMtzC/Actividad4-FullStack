@@ -321,3 +321,5 @@ function DashboardView() {
         </div>
     );
 }
+
+export default App;
