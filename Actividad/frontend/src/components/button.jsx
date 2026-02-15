@@ -3,10 +3,10 @@ import { buildApiUrl } from "../lib/api.js";
 
 function ButtonComponent({ text, onClick, api, type = "button", className = "", style }) {
     const buttonStyle = {
-        backgroundColor: "#5D5D5D",
+        backgroundColor: "#5D5D5D", // Gris oscuro de tu captura
         color: "white",
         border: "none",
-        borderRadius: "20px",
+        borderRadius: "20px",    // Forma de cápsula
         padding: "6px 14px",
         cursor: "pointer",
         fontWeight: "500",
