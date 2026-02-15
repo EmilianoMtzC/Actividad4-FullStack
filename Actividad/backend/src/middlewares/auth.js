@@ -1,8 +1,8 @@
-import jwt from 'jsonwebtoken'; // Cambiado de require
+import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'gokussj1';
 
-export function auth(req, res, next) { // Cambiado a exportación de ES Modules
+export function auth(req, res, next) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -13,9 +13,6 @@ export function auth(req, res, next) { // Cambiado a exportación de ES Modules
 
     try {
         const decodedToken = jwt.verify(token, JWT_SECRET);
-
-        // Guardamos los datos del usuario (id, name) en el objeto req
-        // para que las siguientes funciones puedan usarlos
         req.user = decodedToken;
         next();
     } catch (error) {
@@ -23,4 +20,4 @@ export function auth(req, res, next) { // Cambiado a exportación de ES Modules
     }
 }
 
-export default auth; // Exportación por defecto
+export default auth;

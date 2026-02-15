@@ -5,13 +5,12 @@ export const createTransaction = async (data) => {
 
     const [result] = await pool.query(
         "INSERT INTO transactions (user_id, type, category, amount, description, date) VALUES (?, ?, ?, ?, ?, ?)",
-        [user_id, type, category, amount, description, date] // <-- ESTO FALTABA
+        [user_id, type, category, amount, description, date]
     );
 
     return result.insertId;
 };
 
-// Cambiamos el nombre para que coincida con lo que busca tu controlador:
 export const getTransactionsByUserId = async (user_id) => {
     const [rows] = await pool.query(
         "SELECT * FROM transactions WHERE user_id = ? ORDER BY date DESC",

@@ -9,7 +9,6 @@ export const createTransactionController = async (req, res) => {
         const user_id = req.user.id || req.user.userId;
         const { type, category, amount, description, date } = req.body;
 
-        // LOG para ver qué estamos enviando
         console.log("Enviando a DB:", { user_id, type, category, amount, description, date });
 
         const id = await createTransaction({
@@ -18,7 +17,6 @@ export const createTransactionController = async (req, res) => {
 
         res.status(201).json({ id });
     } catch (error) {
-        // ESTA LÍNEA ES CLAVE: Mira tu consola de WebStorm ahora
         console.error("ERROR REAL DE MYSQL:", error.sqlMessage || error.message);
 
         res.status(500).json({ message: "Error creating transaction", details: error.sqlMessage });
@@ -29,7 +27,6 @@ export const getTransactionsController = async (req, res) => {
     try {
         const user_id = req.user.id || req.user.userId;
 
-        // CORRECCIÓN: Usar el nombre que importaste arriba
         const transactions = await getTransactionsByUserId(user_id);
 
         res.json(transactions);

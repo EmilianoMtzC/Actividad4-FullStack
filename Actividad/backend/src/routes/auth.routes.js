@@ -10,11 +10,11 @@ import db from '../config/db.js';
 // ======== CONFIGURACIÓN =========================================
 // ================================================================
 
-const router = express.Router(); // <--- Solo declaramos 'router' UNA VEZ
+const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "gokussj1";
 
 // REGISTRAR USUARIO =========================================================
-router.post("/register", async (req, res) => { // Añadimos 'async'
+router.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
 
     try {
@@ -33,7 +33,7 @@ router.post("/register", async (req, res) => { // Añadimos 'async'
 });
 
 // LOGGEAR USUARIO =========================================================
-router.post("/login", async (req, res) => { // Añadimos 'async'
+router.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
     try {
