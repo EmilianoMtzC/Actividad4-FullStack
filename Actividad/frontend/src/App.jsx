@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "./styles/style.css"
 import Navbar from "./components/Navbar";
 import ButtonComponent from "./components/button.jsx";
 import { buildApiUrl } from "./lib/api";
