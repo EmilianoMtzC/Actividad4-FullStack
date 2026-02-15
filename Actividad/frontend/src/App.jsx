@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import ButtonComponent from "../components/ButtonComponent";
-import { buildApiUrl } from "../utils/api";
+import Navbar from "./components/Navbar";
+import ButtonComponent from "./components/button.jsx";
+import { buildApiUrl } from "./lib/api";
 
 function DashboardView() {
         const [transactions, setTransactions] = useState([]);
