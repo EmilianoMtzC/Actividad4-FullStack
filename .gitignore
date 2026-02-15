@@ -1,4 +1,5 @@
 ./idea
+./ia
 ./Actividad/frontend/.node_modules
 ./Actividad/frontend/.env
 ./Actividad/backend/.node_modules
