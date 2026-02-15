@@ -2,6 +2,7 @@ import "./styles/style.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import DashboardView from "./pages/DashboardView.jsx";
 
 function App() {
     return (
