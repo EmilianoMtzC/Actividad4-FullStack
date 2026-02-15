@@ -4,10 +4,23 @@ import ButtonComponent from "../components/button.jsx";
 import { buildApiUrl } from "../lib/api.js";
 import { useEffect, useState } from "react";
 
+function decodeJwtPayload(token) {
+    try {
+        const [, payload] = token.split(".");
+        if (!payload) return null;
+        const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+        const json = atob(normalized);
+        return JSON.parse(json);
+    } catch {
+        return null;
+    }
+}
+
 function DashboardView() {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [typeFilterOpen, setTypeFilterOpen] = useState(false);
     const [typeFilter, setTypeFilter] = useState("all");
     const [showForm, setShowForm] = useState(false);
@@ -44,8 +57,37 @@ function DashboardView() {
     };
 
     useEffect(() => {
+        const token = localStorage.getItem("token");
+        const payload = token ? decodeJwtPayload(token) : null;
+        setCurrentUserId(payload?.userId ?? payload?.id ?? null);
         fetchTransactions();
     }, []);
+
+    const handleDelete = async (txId) => {
+        if (!txId) return;
+        const confirmed = window.confirm("¿Eliminar esta transacción?");
+        if (!confirmed) return;
+
+        setError("");
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(buildApiUrl(`/api/transactions/${txId}`), {
+                method: "DELETE",
+                headers: {
+                    Authorization: token ? `Bearer ${token}` : ""
+                }
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data?.error || data?.message || "Error al eliminar transacción");
+            }
+
+            // Optimistic UI update
+            setTransactions((prev) => prev.filter((tx) => tx.id !== txId));
+        } catch (err) {
+            setError(err?.message || "Error al eliminar transacción");
+        }
+    };
 
     const handleFormChange = (event) => {
         const { name, value } = event.target;
@@ -186,12 +228,13 @@ function DashboardView() {
                                     <th>Category</th>
                                     <th>Amount</th>
                                     <th>Description</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {filteredTransactions.length === 0 && !loading ? (
                                     <tr>
-                                        <td colSpan="5" className="empty-row">
+                                        <td colSpan="6" className="empty-row">
                                             No transactions yet.
                                         </td>
                                     </tr>
@@ -207,6 +250,17 @@ function DashboardView() {
                                             <td>{tx.category || "-"}</td>
                                             <td>{tx.amount ?? "-"}</td>
                                             <td>{tx.description || "-"}</td>
+                                            <td>
+                                                {currentUserId != null && Number(tx.user_id) === Number(currentUserId) ? (
+                                                    <button
+                                                        type="button"
+                                                        className="tx-delete-btn"
+                                                        onClick={() => handleDelete(tx.id)}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                ) : null}
+                                            </td>
                                         </tr>
                                     ))
                                 )}

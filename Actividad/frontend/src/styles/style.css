@@ -220,6 +220,25 @@ body {
     background: rgba(255, 255, 255, 0.03);
 }
 
+.tx-delete-btn {
+    background: #6a2f2f;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 6px 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tx-delete-btn:hover {
+    background: #843a3a;
+}
+
+.tx-delete-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .empty-row {
     text-align: center;
     color: #9f9f9f;
