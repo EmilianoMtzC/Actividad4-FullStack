@@ -1,8 +1,8 @@
-import "./styles/style.css";
+import "../styles/style.css";
 import Navbar from "../components/Navbar.jsx";
 import ButtonComponent from "../components/button.jsx";
 import { buildApiUrl } from "../lib/api.js";
-import {useState} from "react";
+import { useEffect, useState } from "react";
 
 function DashboardView() {
     const [transactions, setTransactions] = useState([]);
