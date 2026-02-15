@@ -71,7 +71,6 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Frontend-Sin-Back&quot;,
     &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/emmtzc/FullStack/Actividad4&quot;,
@@ -100,23 +99,6 @@
       <recent name="$PROJECT_DIR$/Actividad/backend/src/routes" />
       <recent name="$PROJECT_DIR$/Actividad/backend/src" />
     </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="configurationStatuses">
-      <map>
-        <entry key="HttpClient.HttpRequestRunConfigurationType">
-          <value>
-            <map>
-              <entry key="All in pruebas_api" value="STOPPED" />
-              <entry key="pruebas_api | Borrar una transacción específica" value="STOPPED" />
-              <entry key="pruebas_api | Crear una nueva transacción" value="STOPPED" />
-              <entry key="pruebas_api | Login (Aquí obtendrás el token)" value="STOPPED" />
-              <entry key="pruebas_api | Obtener Transacciones (Reemplaza el token después del login)" value="STOPPED" />
-            </map>
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
   <component name="RunManager" selected="HTTP Request.pruebas_api | Borrar una transacción específica">
     <configuration name="All in pruebas_api" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/pruebas_api.http">
