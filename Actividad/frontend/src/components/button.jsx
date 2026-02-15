@@ -1,12 +1,20 @@
 import { useState } from "react";
 import { buildApiUrl } from "../lib/api.js";
 
-function ButtonComponent({ text, onClick, api, type = "button", className = "", style }) {
+function ButtonComponent({
+                             text,
+                             onClick,
+                             api,
+                             type = "button",
+                             className = "",
+                             style,
+                             confirmMessage
+                         }) {
     const buttonStyle = {
-        backgroundColor: "#5D5D5D", // Gris oscuro de tu captura
+        backgroundColor: "#5D5D5D",
         color: "white",
         border: "none",
-        borderRadius: "20px",    // Forma de cápsula
+        borderRadius: "20px",
         padding: "6px 14px",
         cursor: "pointer",
         fontWeight: "500",
@@ -19,6 +27,11 @@ function ButtonComponent({ text, onClick, api, type = "button", className = "", 
 
     const handleClick = async (event) => {
         setError("");
+        
+        if (confirmMessage) {
+            const ok = window.confirm(confirmMessage);
+            if (!ok) return;
+        }
 
         if (api) {
             const {
@@ -33,6 +46,7 @@ function ButtonComponent({ text, onClick, api, type = "button", className = "", 
             } = api;
 
             const resolvedBody = typeof body === "function" ? body() : body;
+
             const requestHeaders = {
                 "Content-Type": "application/json",
                 ...headers
@@ -47,6 +61,7 @@ function ButtonComponent({ text, onClick, api, type = "button", className = "", 
 
             try {
                 setLoading(true);
+
                 const response = await fetch(buildApiUrl(path), {
                     method,
                     headers: requestHeaders,
@@ -60,23 +75,18 @@ function ButtonComponent({ text, onClick, api, type = "button", className = "", 
                     throw new Error(message);
                 }
 
-                if (onSuccess) {
-                    onSuccess(data);
-                }
+                if (onSuccess) onSuccess(data);
+
             } catch (err) {
                 const message = err?.message || "Error en la petición";
                 setError(message);
-                if (onError) {
-                    onError(err);
-                }
+                if (onError) onError(err);
             } finally {
                 setLoading(false);
             }
         }
 
-        if (onClick) {
-            onClick(event);
-        }
+        if (onClick) onClick(event);
     };
 
     return (

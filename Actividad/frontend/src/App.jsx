@@ -1,12 +1,3 @@
-import "./styles/style.css";
-import { useEffect, useState } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Navbar from "./components/Navbar.jsx";
-import ButtonComponent from "./components/button.jsx";
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
-import { buildApiUrl } from "./lib/api.js";
-
 function DashboardView() {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -174,49 +165,76 @@ function DashboardView() {
                             />
                         </div>
                     </section>
+
                     <section className="dashboard-panel">
                         <div className="dashboard-header">
                             <span>Transactions</span>
                             {loading ? <span className="muted">Cargando...</span> : null}
                         </div>
+
                         {error ? <div className="dashboard-error">{error}</div> : null}
+
                         <div className="table-wrap">
                             <table className="transactions-table">
                                 <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Type</th>
-                                        <th>Category</th>
-                                        <th>Amount</th>
-                                        <th>Description</th>
-                                    </tr>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
                                 </thead>
+
                                 <tbody>
-                                    {filteredTransactions.length === 0 && !loading ? (
-                                        <tr>
-                                            <td colSpan="5" className="empty-row">
-                                                No transactions yet.
+                                {filteredTransactions.length === 0 && !loading ? (
+                                    <tr>
+                                        <td colSpan="6" className="empty-row">
+                                            No transactions yet.
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredTransactions.map((tx) => (
+                                        <tr key={tx.id}>
+                                            <td>
+                                                {tx.date
+                                                    ? new Date(tx.date).toLocaleDateString()
+                                                    : "-"}
+                                            </td>
+                                            <td>{tx.type || "-"}</td>
+                                            <td>{tx.category || "-"}</td>
+                                            <td>{tx.amount ?? "-"}</td>
+                                            <td>{tx.description || "-"}</td>
+
+                                            <td>
+                                                <ButtonComponent
+                                                    text="Delete"
+                                                    confirmMessage="¿Eliminar esta transacción?"
+                                                    api={{
+                                                        path: `/api/transactions/${tx.id}`,
+                                                        method: "DELETE",
+                                                        onSuccess: () => {
+                                                            setTransactions(prev =>
+                                                                prev.filter(t => t.id !== tx.id)
+                                                            );
+                                                        }
+                                                    }}
+                                                    style={{
+                                                        backgroundColor: "#E74C3C",
+                                                        padding: "4px 10px",
+                                                        fontSize: "0.8rem"
+                                                    }}
+                                                />
                                             </td>
                                         </tr>
-                                    ) : (
-                                        filteredTransactions.map((tx) => (
-                                            <tr key={tx.id}>
-                                                <td>
-                                                    {tx.date
-                                                        ? new Date(tx.date).toLocaleDateString()
-                                                        : "-"}
-                                                </td>
-                                                <td>{tx.type || "-"}</td>
-                                                <td>{tx.category || "-"}</td>
-                                                <td>{tx.amount ?? "-"}</td>
-                                                <td>{tx.description || "-"}</td>
-                                            </tr>
-                                        ))
-                                    )}
+                                    ))
+                                )}
                                 </tbody>
                             </table>
                         </div>
                     </section>
+
                     {showForm ? (
                         <div className="modal-backdrop" onClick={() => setShowForm(false)}>
                             <form
@@ -225,6 +243,7 @@ function DashboardView() {
                                 onClick={(event) => event.stopPropagation()}
                             >
                                 <h2>Nueva transacción</h2>
+
                                 <div className="modal-row">
                                     <label>Type</label>
                                     <select name="type" value={form.type} onChange={handleFormChange}>
@@ -232,6 +251,7 @@ function DashboardView() {
                                         <option value="expense">expense</option>
                                     </select>
                                 </div>
+
                                 <div className="modal-row">
                                     <label>Category</label>
                                     <input
@@ -242,6 +262,7 @@ function DashboardView() {
                                         required
                                     />
                                 </div>
+
                                 <div className="modal-row">
                                     <label>Amount</label>
                                     <input
@@ -254,6 +275,7 @@ function DashboardView() {
                                         required
                                     />
                                 </div>
+
                                 <div className="modal-row">
                                     <label>Description</label>
                                     <input
@@ -263,6 +285,7 @@ function DashboardView() {
                                         placeholder="descripcion"
                                     />
                                 </div>
+
                                 <div className="modal-row">
                                     <label>Date</label>
                                     <input
@@ -273,9 +296,11 @@ function DashboardView() {
                                         required
                                     />
                                 </div>
+
                                 {createError ? (
                                     <div className="dashboard-error">{createError}</div>
                                 ) : null}
+
                                 <div className="modal-actions">
                                     <ButtonComponent
                                         text="Cancelar"
@@ -296,18 +321,3 @@ function DashboardView() {
         </div>
     );
 }
-
-function App() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Navigate to="/login" replace />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/dashboard" element={<DashboardView />} />
-            </Routes>
-        </BrowserRouter>
-    );
-}
-
-export default App;
